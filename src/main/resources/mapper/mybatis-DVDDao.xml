@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.pan.web.dao.DVDDao">
+	
+	<!--public boolean saveDVD(DVD dvd);  -->
+	<insert id="saveDVD" parameterType="com.pan.web.bean.DVD" useGeneratedKeys="true" keyProperty="id">
+		insert into tabl_dvd(d_name,d_count,status)values(#{dname},#{dcount},#{status}) 
+	</insert>
+	
+	<!--public boolean delDVD(int did)  -->
+	<delete id="delDVD" parameterType="int">
+		delete from tabl_dvd where id=#{did}
+	</delete>
+	
+	<!--public boolean updeteDVD(DVD dvd);  -->
+	<update id="updateDVD" parameterType="com.pan.web.bean.DVD">
+		update tabl_dvd set d_name=#{dname},d_count=#{dcount},status=#{status} where id=#{id}
+	</update>
+	
+	<!--public List<DVD> queryDVDs()-->
+	<select id="queryDVDs" resultType="com.pan.web.bean.DVD">
+		select * from tabl_dvd
+	</select>
+	
+	<!-- public List<DVD> queryDVDBYName(String dname);
+		public DVD queryDVDbyDid(int did);
+		; -->
+	<select id="queryDVDBYName" resultType="com.pan.web.bean.DVD" >
+		select * from tabl_dvd where d_name=#{dname}
+	</select>
+	
+	<!-- public List<DVD> querysortDvdsByLimit(int index,int numer);按热门查找 -->
+	<select id="querysortDvdsByLimit"  resultType="com.pan.web.bean.DVD" >
+		select  * from tabl_dvd order by d_count desc 
+	</select>
+	
+	<!-- public DVD queryDVDbyDid(int did); -->
+	<select id="queryDVDbyDid" resultType="com.pan.web.bean.DVD">
+		select * from tabl_dvd where id=#{did}
+	</select>
+	
+	<!-- public List<DVD> queryDVDByStatus(int status) -->
+	<select id="queryDVDByStatus" resultType="com.pan.web.bean.DVD">
+		select * from tabl_dvd where status=#{status}
+	</select>
+</mapper>

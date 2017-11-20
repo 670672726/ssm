@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.pan.web.dao.RecordDao">
+	
+	<!-- public boolean saveRecord(Record record); -->
+  <insert id="saveRecord" parameterType="com.pan.web.bean.Record" useGeneratedKeys="true" keyProperty="id">
+  	insert into tabl_record(u_id,d_id,lendtime,returntime) values(#{uid},#{did},#{lendTime},#{returnTime})
+  </insert>
+  
+  <!-- public boolean uptateRecord(Record record); -->
+  <update  id="uptateRecord" parameterType="com.pan.web.bean.Record">
+  	update tabl_record set u_id=#{uid},d_id=#{did},lendtime=#{lendTime},returntime=#{returnTime} where id=#{id}
+  </update>
+   
+<!--public Record queryRecordById(int rid);-->
+    <select id="queryRecordById" resultType="com.pan.web.bean.Record">
+    	select * from tabl_record where id=#{rid}
+    </select>
+  
+  <!-- public List<Record2> queryAllRecords(); -->
+  <select id="queryAllRecords" resultType="com.pan.web.bean.Record2">
+  	SELECT d.id ,u.u_name, d.d_name,r.lendtime,r.returntime 
+  	FROM tabl_record r INNER JOIN tabl_user u ON r.u_id=u.id INNER JOIN tabl_dvd d ON r.u_id=d.id 
+  </select>
+  
+  <!--public List<Record2> queryRecordByUname(String uname);-->
+  <select id="queryRecordByUname" resultType="com.pan.web.bean.Record2">
+  	SELECT d.id ,u.u_name, d.d_name,r.lendtime,r.returntime 
+  	FROM tabl_record r INNER JOIN tabl_user u ON r.u_id=u.id 
+  	INNER JOIN tabl_dvd d ON r.u_id=d.id and u.u_name=#{uname}
+  </select>
+  
+  <!-- public List<Record2> queryrRecordByDname(String dname); -->
+  <select id="queryrRecordByDname" resultType="com.pan.web.bean.Record2">
+  	SELECT d.id ,u.u_name, d.d_name,r.lendtime,r.returntime 
+  	FROM tabl_record r INNER JOIN tabl_user u ON r.u_id=u.id 
+  	INNER JOIN tabl_dvd d ON r.u_id=d.id and d.d_name=#{dname}
+  </select>
+  
+  <!--public List<Record2> queryUserRecordByReturnTime(boolean flag,String uname  -->
+  <select id="queryUserRecordByReturnTime" resultType="com.pan.web.bean.Record2">
+  		SELECT d.id ,u.u_name, d.d_name,r.lendtime,r.returntime 
+  		FROM tabl_record r INNER JOIN tabl_user u ON r.u_id=u.id 
+  		INNER JOIN tabl_dvd d ON r.u_id=d.id and u.u_name=#{uname} and 
+  		<if test="flag">r.returntime is not null</if>
+  		<if test="flag==false">r.returntime is null</if>
+  </select>
+  </mapper>

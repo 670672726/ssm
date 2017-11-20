@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<!-- mapUnderscoreToCamelCase驼峰命名法 -->
+<!--  aggressiveLazyLoading 所有属性是否一开始全部加载-->
+<settings>
+	<setting name="mapUnderscoreToCamelCase" value="true"/>
+	<setting name="lazyLoadingEnabled" value="true"/>
+	<setting name="aggressiveLazyLoading" value="false"/>
+
+</settings>
+
+<typeAliases>
+	<!-- package为某个包下的所有批量取别名，别名为类名，不区分大小写 -->
+	<package name="com.pan.web.ben"/>
+</typeAliases>
+<plugins>
+    <!-- com.github.pagehelper为PageHelper类所在包名 -->
+    <plugin interceptor="com.github.pagehelper.PageInterceptor">
+        <property name="reasonable" value="true"/>
+	</plugin>
+</plugins>
+
+ 
+</configuration>

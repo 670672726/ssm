@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.pan.web.dao.UserDao">
+
+	<!-- public boolean saveUser(User user) -->
+	<insert id="saveUser" parameterType="com.pan.web.bean.User" useGeneratedKeys="true" keyProperty="id">
+	<selectKey resultType="int"></selectKey>
+		insert into tabl_user(u_name,u_pass,type) values(#{uname},#{upass},#{type})
+	</insert>
+	
+	<!-- public boolean delUser(int id) -->
+	<delete id="delUser" parameterType="String">
+		delete from tabl_user where id=#{id}
+	</delete>
+	
+	<!--public boolean updateUser(User user)  -->
+	<update id="updateUser" parameterType="com.pan.web.bean.User">
+		update tabl_user set u_name=#{uname},u_pass=#{upass},type=#{type} where id=#{id}
+	</update>
+	
+	<!-- public User queryUser(User user); -->
+	<select id="queryUser" resultType="com.pan.web.bean.User">
+		select * from tabl_user where u_name=#{uname} and u_pass=#{upass} and type=#{type}
+	</select>
+	<!-- public List<User> queryAllUser(); -->
+	<select id="queryAllUser" resultType="com.pan.web.bean.User">
+		select * from tabl_user
+	</select>
+</mapper>
