@@ -13,6 +13,8 @@ public class DVD {
 	public DVD(String dname) {
 		super();
 		this.dname = dname;
+		this.dcount=0;
+		this.status=1;
 	}
 
 	public DVD(int id, String dname, int dcount, int status) {

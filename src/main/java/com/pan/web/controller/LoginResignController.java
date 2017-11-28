@@ -33,16 +33,16 @@ public class LoginResignController {
 	
 	@RequestMapping("/login")
 	@ResponseBody
-	public String login(User user,ModelAndView modelAndView) {
+	public Msg login(User user) {
 		String uname=user.getUname();
 		String upass=user.getUpass();
 		int type=user.getType();
 		User loginuser=new User(uname, upass, type);
 		if(uImpl.loginUser(loginuser)!=null){
-	
-			return "";
+			int uid = uImpl.loginUser(loginuser).getId();
+			return Msg.sucess().add("uname", uname).add("uid", uid).add("type", type);			
 		}else {
-			return "";
+			return Msg.fail();
 		}	
 	}
 	@RequestMapping("/resgin")

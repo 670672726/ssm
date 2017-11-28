@@ -62,7 +62,31 @@ public class DVDcontrollers {
 		}
 		
 	}
-
+	/**
+	 * dvd≤È—Ø
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/dvdcondition")
+	@ResponseBody
+	public Msg conditionDVD(String dname,int pn) {
+		PageHelper.startPage(pn, 5);
+		List<DVD> querDVDByName = dvdBiz.querDVDByName(dname);
+		PageInfo page = new PageInfo(querDVDByName,5);
+		return Msg.sucess().add("PageInfo", page);
+		
+	}
+	/**
+	 * dvd±‡º≠
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/editdvd")
+	@ResponseBody
+	public Msg editdvd(DVD dvd) {
+		boolean flag = dvdBiz.modifyDVD(dvd);
+		return Msg.sucess();
+	}
 	/**
 	 * dvd±£¥Ê
 	 * 
@@ -96,13 +120,14 @@ public class DVDcontrollers {
 	 */
 	@ResponseBody
 	@RequestMapping(value="/return")
-	public Msg returnDVD(@RequestParam(value="id")int id){
-		int i = dvdBiz.returnDVD(id);
-		if (i==3) {
+	public Msg returnDVD(@RequestParam(value="uid")int uid,@RequestParam(value="did")int did){
+		boolean flag = dvdBiz.returnDVD(uid, did);
+		if (flag) {
 			return Msg.sucess();
 		}else {
 			return Msg.fail();
 		}
+		
 	}
 
 	/**

@@ -31,8 +31,14 @@ $("#login_btn").click(function(){
 		        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',//防止乱码
 		        success:function(result){
 		            if (result.code=100) {
-						
+		            	sessionStorage.setItem("uid",result.extend.uid);
+		            	sessionStorage.setItem("uname",result.extend.uname);
+		            	if (result.extend.type==0) {
+		            	    window.location.href = PATH+"/main/user.jsp";
+						}else
+							window.location.href = PATH+"/main/admin.jsp";
 					}
+					
 		        }
 		    });
 	}

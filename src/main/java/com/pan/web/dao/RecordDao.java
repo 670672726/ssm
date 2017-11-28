@@ -29,4 +29,6 @@ public interface RecordDao {
 	// 查看用户的归还记录（以归还，未归还）
 	public List<Record2> queryUserRecordByReturnTime(
 			@Param("flag") boolean flag, @Param("uname") String uname);
+	public Record2 queryUserRecordByReturnTimeonly(
+			@Param("flag") boolean flag, @Param("uid") int uid,@Param("did")int did);
 }

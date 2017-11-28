@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.pan.web.bean.DVD;
 import com.pan.web.bean.Record;
+import com.pan.web.bean.Record2;
 import com.pan.web.biz.DVDBiz;
 import com.pan.web.dao.DVDDao;
 import com.pan.web.dao.RecordDao;
@@ -86,7 +87,26 @@ public class DVDBizImpl implements DVDBiz {
 			}
 		}
 	}
-
+	public boolean returnDVD(int uid,int did){
+		Record2 record2 = recordDao.queryUserRecordByReturnTimeonly(false,uid, did);
+		if (record2!=null) {
+			
+			Record record=recordDao.queryRecordById((record2.getId()));
+			record.setReturnTime(new SimpleDateFormat("yyyy-MM-dd")
+			.format(new Date()));
+			boolean flag1 = recordDao.uptateRecord(record);
+			DVD dvd = dvdDao.queryDVDbyDid(did);
+			dvd.setStatus(1);// 可借状态
+			boolean flag2 = dvdDao.updateDVD(dvd);
+			if (flag1 && flag2) {
+				return true;// 归还成功
+			} else {
+				return false;// 归还失败
+			}
+		}else {
+			return false;
+		}
+	}
 	public int returnDVD(int rid) {
 		// TODO Auto-generated method stub
 		Record record = recordDao.queryRecordById(rid);

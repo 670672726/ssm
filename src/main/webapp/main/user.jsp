@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>用户界面</title>
 <%
 	pageContext.setAttribute("PATH",request.getContextPath());
 %>
@@ -20,7 +20,7 @@
             <div class="container-fluid">
                 <div class="collapse navbar-collapse" id="example-navbar-collapse">
                     <ul class="nav navbar-nav navbar-right">
-                        <li><a>欢迎您,用户</a>
+                         <li><a id="welcome_username"></a>
                         </li>
                         <li><a href="#">安全退出</a>
                         </li>
@@ -32,10 +32,9 @@
         <div class="container-fluid">
             <div class="row">
             	<!-- 左侧菜单 -->
-                <div class="col-sm-2"> 
-                    <a href="#" class="list-group-item active">用户操作</a>
-					<a href="#" class="list-group-item">DVD查询租赁操作</a>
-					<a href="#" class="list-group-item">DVD租赁记录查询</a>
+                <div class="col-sm-2">
+					<button  class="list-group-item "  id="search_dvd_result">DVD查询租赁操作</button>
+					<button  class="list-group-item " id="search_record_result">DVD租赁记录查询</button>
                 </div>
                 <!-- 右侧主体 -->
                 <div class="col-sm-10">
@@ -48,10 +47,10 @@
                                 <div class="form-group">
                                     <label for="name">状态</label>
                                     <select class="form-control" id="select_val">
-                                        <option value="0">全部DVD</option>
-                                        <option value="1">可借DVD</option>
-                                        <option value="2">已借DVD</option>
-                                        <option value="3">热门DVD</option>
+                                        <!-- 
+                                        
+                                        
+                                        -->
                                     </select>
                                 </div>
                                 <div class="form-group">
@@ -65,13 +64,7 @@
 						<div class="col-md-12">
 							<table class="table table-hover" id="dvd_table">
 								<thead>
-									<tr>
-										<td>序列号</td>
-										<td>DVD名称</td>
-										<td>租借次数</td>
-										<td>状态</td>
-										<td>操作</td>
-									</tr>
+									<!--表头内容  -->
 								</thead>
 								<tbody>
 									<!--表格内容ajax生成 -->
@@ -86,32 +79,121 @@
 					</div>
 				</div>
 				<script type="text/javascript">
-					var allpage;
-					var currentpage;
+					var allpage;//总页
+					var currentpage;//当前页
+					var change=0;//左侧按钮
 					var select_val=0;
+					var uid=sessionStorage.getItem("uid");
+					var uname=sessionStorage.getItem("uname");
 					/*页面加载完发送请求  */
 					$(function() {
-						to_page(1,0);
-					});
-					$("#search").click(function(){
-						var select_val=$("#select_val").val();
+						$("#welcome_username").append("欢迎您，"+uname);
 						to_page(1,select_val);
 					});
+					/*左侧按钮0  */
+					$("#search_dvd_result").click(function(){
+						change=0;
+						to_page(1,select_val);
+					});
+					/*左侧按钮1  */
+					$("#search_record_result").click(function(){
+						change=1;
+						to_page(1,select_val);
+					});
+					/*	查询  */
+					$("#search").click(function(){
+						select_val=$("#select_val").val();
+						to_page(1,select_val);
+					});
+					function select(){
+						if (select_val==0) {
+							$("#select_val").find("option:eq(0)").attr("selected","selected");
+						}else if (select_val==1) {
+							$("#select_val").find("option:eq(1)").attr("selected","selected");
+						}else if (select_val==2) {
+							$("#select_val").find("option:eq(2)").attr("selected","selected");
+						}else {
+							$("#select_val").find("option:eq(3)").attr("selected","selected");
+						}
+						
+					}
 					/* 到达页面 */
 					function to_page(pn,select_val) {
-						$.ajax({
-							url:"${PATH}/dvdshow.do",
-							data:"select_val=" + select_val + "&pn=" + pn,
-							type:"post",
-							contentType: 'application/x-www-form-urlencoded; charset=UTF-8',//防止乱码
-							success:function(result){
-								build_dvd_table(result);
-								build_page_info(result);
-								build_page_nav(result);
-							}
+						if (change==0) {
+							$.ajax({
+								url:"${PATH}/dvdshow.do",
+								data:"select_val="+select_val+"&pn="+pn,
+								type:"get",
+								contentType: 'application/x-www-form-urlencoded; charset=UTF-8',//防止乱码
+								success:function(result){
+									build_thead_select();
+									build_dvd_table(result);
+									build_page_info(result);
+									build_page_nav(result);
+								}
+							});
+						}else {
+							$.ajax({
+								url:"${PATH}/recordshow.do",
+								data:"pn=" + pn+"&select_val="+select_val+"&uname="+uname,
+								type:"post",
+								contentType: 'application/x-www-form-urlencoded; charset=UTF-8',//防止乱码
+								success:function(result){
+									build_thead_select();
+									build_record_table(result);
+									build_page_info(result);
+									build_page_nav(result);
+								}
+							});
+						}
+						
+					}
+					/* 显示表头和选项 */
+					function build_thead_select(){
+						$("#dvd_table thead").empty();
+						$("#select_val").empty();
+						if (change==0){
+							/* 表头 */
+							$("<tr></tr>").append($("<td>DVD序列号</td>"))
+							.append($("<td>DVD名称</td>")).append($("<td>租借次数</td>"))
+							.append($("<td>状态</td>")).append($("<td>操作</td>"))
+							.appendTo("#dvd_table thead");
+							/*下拉框 */				
+							$("#select_val").append("<option value='0'>全部DVD</option>")
+							.append("<option value='1'>可借DVD</option>")
+							.append("<option value='2'>已借DVD</option>")
+							.append("<option value='3'>热门DVD</option> ");
+							select();
+						}else{
+							/* 表头 */
+							$("<tr></tr>").append($("<td>记录序列号</td>"))
+							.append($("<td>DVD名称</td>"))
+							.append($("<td>借用日期</td>")).append($("<td>归还日期</td>"))
+							.appendTo("#dvd_table thead");
+							/*下拉框*/				
+							$("#select_val").append("<option value='0'>所有租赁记录</option>")
+							.append("<option value='1'>未归还租赁记录</option>")
+							.append("<option value='2'>已归还租赁记录</option>");
+							select();
+						}
+					}
+					/*显示表体 record*/
+					function build_record_table(result){
+						$("#dvd_table tbody").empty();
+						var dvd=result.extend.PageInfo.list;
+						$.each(dvd,function(index,item){
+							var id=$("<td></td>").append(item.id);
+							var dname=$("<td></td>").append(item.dname);
+							var lendtime=$("<td></td>").append(item.lendTime);
+							var returntime=$("<td></td>").append(item.returnTime);
+						
+							$("<tr></tr>").append(id)
+							.append(dname).append(lendtime)
+							.append(returntime)
+							.appendTo("#dvd_table tbody");
 						});
 					}
-					/*显示表格  */
+					/*显示表体 DVD */
 					function build_dvd_table(result) {
 						$("#dvd_table tbody").empty();
 						var dvd=result.extend.PageInfo.list;
@@ -218,12 +300,12 @@
 						});
 						/* 还DVD */
 						$(document).on("click",".return_btn",function(){
-							var id=$(this).attr("return_id");
+							var did=$(this).attr("return_id");
 							var dname=$(this).parents("tr").find("td:eq(1)").text();
 							if(confirm("确认要归还【"+dname+"】吗")){
 								$.ajax({
 									url:"${PATH}/return.do",
-									data:"id="+id,
+									data:"uid="+uid+"&did="+did,
 									type:"post",
 									success:function(result){
 										to_page(currentpage, select_val);
